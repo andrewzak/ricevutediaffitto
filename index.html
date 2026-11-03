@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ricevute di Affitto – app gratuita per Android</title>
+<meta name="description" content="Ricevute di Affitto: l'app gratuita per Android che compila, calcola e stampa le ricevute del canone di locazione, 3 per foglio A4.">
+<!--
+  NOTE PER ZAK
+  - Nessuna risorsa esterna: niente Google Fonts, niente script, niente cookie.
+  - File da caricare nella stessa cartella di questo index.html:
+      logo.png               (il logo con angoli arrotondati)
+      screen-home.png        (screenshot Home)
+      screen-modulo.png      (screenshot modulo)
+      screen-ricevute.png    (screenshot elenco ricevute)
+      screen-pdf.png         (screenshot del PDF)
+  - Cerca "DA COMPILARE" per trovare i punti da completare.
+-->
+<style>
+  :root {
+    --bg: #D6DECC;
+    --bg-dark: #C3CDB4;
+    --card: #F7F7F7;
+    --blue: #1F3A7A;
+    --orange: #CC7000;
+    --text: #1d2433;
+    --muted: #4a5568;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  a { color: var(--blue); }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+
+  /* Barra di navigazione */
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--bg-dark);
+    border-bottom: 2px solid var(--blue);
+  }
+  nav .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap;
+  }
+  nav .brand { font-weight: 800; color: var(--blue); text-decoration: none; font-size: 18px; }
+  nav ul { list-style: none; display: flex; gap: 16px; margin: 0; padding: 0; flex-wrap: wrap; }
+  nav ul a { text-decoration: none; font-weight: 600; font-size: 15px; }
+
+  /* Testata */
+  header.hero { padding: 48px 0 32px; text-align: center; }
+  .logo {
+    width: 180px; height: 180px; border-radius: 36px;
+    background: var(--orange); border: 3px solid var(--blue);
+    display: inline-flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  h1 { color: var(--blue); font-size: clamp(28px, 6vw, 44px); margin: 20px 0 8px; line-height: 1.15; }
+  .tagline { font-size: 19px; color: var(--muted); max-width: 640px; margin: 0 auto 24px; }
+
+  /* Pulsanti */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 24px; border-radius: var(--radius);
+    background: var(--bg-dark); color: var(--blue);
+    border: 2px solid var(--blue); font-weight: 700; font-size: 17px;
+    text-decoration: none;
+  }
+  .btn.primary { background: var(--blue); color: #fff; }
+  .btn[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
+  .btn small { font-weight: 500; font-size: 13px; }
+  .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* Sezioni */
+  section { padding: 40px 0; }
+  h2 { color: var(--blue); font-size: 28px; margin: 0 0 16px; }
+  h3 { color: var(--blue); font-size: 19px; margin: 24px 0 8px; }
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    border: 2px solid var(--bg-dark); padding: 20px 24px;
+  }
+
+  /* Funzioni */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .features .card h3 { margin-top: 0; }
+  .features .card p { margin: 0; color: var(--muted); }
+
+  /* Screenshot */
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  .shot { text-align: center; }
+  .shot .frame {
+    aspect-ratio: 9 / 19; border-radius: 22px; overflow: hidden;
+    background: var(--card); border: 3px solid var(--blue);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: 14px; padding: 8px;
+  }
+  .shot .frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .shot p { margin: 8px 0 0; font-weight: 600; color: var(--blue); }
+
+  /* Vademecum */
+  .guide ul { padding-left: 20px; margin: 4px 0 0; }
+  .guide li { margin-bottom: 6px; }
+  .note {
+    background: #FFF4E5; border-left: 5px solid var(--orange);
+    padding: 12px 16px; border-radius: 0; margin-top: 20px;
+  }
+
+  /* Sostieni */
+  #donazioni .card { text-align: center; }
+  #donazioni p { max-width: 620px; margin: 0 auto 20px; }
+
+  /* Piè di pagina */
+  footer { background: var(--bg-dark); border-top: 2px solid var(--blue); padding: 32px 0; font-size: 15px; }
+  footer h3 { margin-top: 0; }
+  .nocookie { font-weight: 700; color: var(--blue); }
+  .small { font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top">Ricevute di Affitto</a>
+    <ul>
+      <li><a href="#funzioni">Funzioni</a></li>
+      <li><a href="#schermate">Schermate</a></li>
+      <li><a href="#vademecum">Vademecum</a></li>
+      <li><a href="#donazioni">Sostieni</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="logo">
+      <img src="logo_app_home.png" alt="Logo Ricevute di Affitto">
+    </div>
+    <h1>Ricevute di Affitto</h1>
+    <p class="tagline">
+      L'app gratuita per Android che compila, calcola e stampa le ricevute del canone di locazione.
+      Tre ricevute per foglio A4, pronte da firmare e fino a 12 ricevute in un unico PDF per chiudere l'anno in un minuto.    </p>
+    <div class="actions">
+      <!-- DA COMPILARE: quando l'app è pubblicata, sostituisci href="#" con il link del Play Store
+           e togli aria-disabled="true" e la scritta "In arrivo". -->
+      <a class="btn primary" href="#" aria-disabled="true">
+        Scarica da Google Play <small>(in arrivo)</small>
+      </a>
+      <a class="btn" href="#vademecum">Come funziona</a>
+    </div>
+  </div>
+</header>
+
+<section id="funzioni">
+  <div class="wrap">
+    <h2>Cosa fa</h2>
+    <div class="features">
+      <div class="card">
+        <h3>Calcoli automatici</h3>
+        <p>Affitto, ISTAT, spese accessorie e condominiali, IVA e bollo: il totale e l'importo in lettere si compilano da soli.</p>
+      </div>
+      <div class="card">
+        <h3>Fino a 12 ricevute</h3>
+        <p>Prepari tutto l'anno in una volta. Numero, data e mese successivi vengono suggeriti a ogni ricevuta.</p>
+      </div>
+      <div class="card">
+        <h3>Correggi quando vuoi</h3>
+        <p>Dall'elenco delle ricevute puoi modificare o eliminare ogni ricevuta prima di creare il PDF.</p>
+      </div>
+      <div class="card">
+        <h3>PDF pronto da stampare</h3>
+        <p>Tre ricevute per foglio A4, con il formato classico del modulo cartaceo e lo spazio per la marca da bollo.</p>
+      </div>
+      <div class="card">
+        <h3>I dati restano tuoi</h3>
+        <p>Nessun account e nessuna connessione: tutto resta sul telefono e non viene inviato a nessuno.</p>
+      </div>
+      <div class="card">
+        <h3>Gratuita</h3>
+        <p>Nessun abbonamento. Se ti è utile, puoi sostenere il progetto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="schermate">
+  <div class="wrap">
+    <h2>Le schermate</h2>
+    <!-- Quando hai gli screenshot, sostituisci il testo dentro ogni .frame con:
+         <img src="screen-home.png" alt="Schermata Home">  (e così per gli altri) -->
+    <div class="shots">
+      <div class="shot">
+        <div class="frame">Screenshot Home</div>
+        <p>Home</p>
+      </div>
+      <div class="shot">
+        <div class="frame">Screenshot modulo</div>
+        <p>Il modulo</p>
+      </div>
+      <div class="shot">
+        <div class="frame">Screenshot ricevute</div>
+        <p>Elenco ricevute</p>
+      </div>
+      <div class="shot">
+        <div class="frame">Screenshot PDF</div>
+        <p>Il PDF</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="vademecum">
+  <div class="wrap">
+    <h2>Vademecum</h2>
+    <div class="card guide">
+      <h3>Compilare il modulo</h3>
+      <ul>
+        <li>Compila i campi della ricevuta. <strong>I campi non sono obbligatori</strong>: lasciali vuoti se vuoi stampare in bianco.</li>
+        <li>Nelle date scrivi solo le cifre: <strong>01012026</strong> diventa 01/01/2026. Giorni, mesi e anni vengono controllati.</li>
+      </ul>
+
+      <h3>Importi</h3>
+      <ul>
+        <li>Il <strong>totale</strong> Si calcola da solo, inserisci l'affitto, ISTAT, spese accessorie e condominiali, più l'IVA sull'imponibile, più il bollo. <strong>I campi vanno compilati inserendo la cifra senza il simbolo dell'euro, per ISTAT e IVA inserire il numero senza il simbolo della percentuale.</strong></li>
+        <li>L'importo in lettere viene scritto automaticamente nel PDF.</li>
+      </ul>
+
+      <h3>Numero, data e mese</h3>
+      <ul>
+        <li>Dopo ogni ricevuta aggiunta vengono suggeriti il <strong>numero</strong> successivo, la <strong>data</strong> (un mese dopo) e il <strong>mese</strong>.</li>
+        <li>Se il mese non coincide con la data compare un <strong>avviso</strong>, ma puoi comunque proseguire nei casi particolari.</li>
+      </ul>
+
+      <h3>Foglio e PDF</h3>
+      <ul>
+        <li>Premi <strong>"Aggiungi al PDF"</strong> per mettere la ricevuta nel foglio. Il foglio accetta fino a <strong>12 ricevute</strong>.</li>
+        <li>Nella schermata <strong>Ricevute</strong> puoi <strong>modificare</strong> o <strong>eliminare</strong> ogni ricevuta. Dopo la modifica premi <strong>"Aggiorna ricevuta"</strong>.</li>
+        <li>Premi <strong>"Crea PDF"</strong> e scegli dove salvarlo: ogni foglio A4 contiene 3 ricevute.</li>
+      </ul>
+
+      <h3>Pulsanti di reset</h3>
+      <ul>
+        <li><strong>Svuota campi</strong> azzera il modulo.</li>
+        <li><strong>Resetta date</strong> cancella le date e il numero. La data di registrazione del contratto resta.</li>
+        <li><strong>Svuota foglio</strong> cancella tutte le ricevute del foglio.</li>
+      </ul>
+
+      <div class="note">
+        <strong>Importante.</strong> Il foglio resta in memoria finché l'app è aperta: se la chiudi, si svuota, quindi crea il PDF prima di uscire.
+        Le ricevute non sostituiscono la registrazione del contratto né la dichiarazione dei redditi.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="donazioni">
+  <div class="wrap">
+    <h2>Sostieni il progetto</h2>
+    <div class="card">
+      <p>
+        Ricevute di Affitto è gratuita e senza pubblicità. Se ti fa risparmiare tempo,
+        puoi offrire un contributo per aiutarmi a mantenerla e migliorarla.
+      </p>
+      <!-- DA COMPILARE: sostituisci href="#" con il link di pagamento (Stripe Payment Link,
+           PayPal, Buy Me a Coffee...) e togli aria-disabled="true".
+           Usa un semplice link: niente script incorporati, così il sito resta senza cookie. -->
+      <a class="btn primary" href="#" aria-disabled="true" rel="noopener">
+        ♥ Sostieni il progetto <small>(in arrivo)</small>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer id="privacy">
+  <div class="wrap">
+    <p class="nocookie">Questo sito non usa cookie né strumenti di tracciamento.</p>
+
+    <h3>Informativa sulla privacy</h3>
+    <!-- DA COMPILARE e da far verificare: questo testo è una bozza generica, non un parere legale. -->
+    <p>
+      <strong>Titolare:</strong> [Nome e Cognome] – contatto: <a href="mailto:[email]">[email]</a>.
+    </p>
+    <p>
+      <strong>Sito web.</strong> Il sito non usa cookie, statistiche o servizi di terze parti.
+      Il fornitore di hosting registra, per motivi tecnici e di sicurezza, i dati di accesso standard
+      (come indirizzo IP, data e ora della visita) nei registri del server, conservati per il tempo previsto dal fornitore.
+      I link esterni (Google Play, servizio di pagamento) portano su siti con proprie informative.
+    </p>
+    <p>
+      <strong>App Ricevute di Affitto.</strong> L'app non richiede account e non invia dati.
+      Le informazioni inserite (nomi, importi, date) restano sul dispositivo dell'utente e servono solo a creare il PDF.
+      Il PDF viene salvato dove sceglie l'utente.
+    </p>
+    <p>
+      <strong>Diritti.</strong> Puoi chiedere informazioni sul trattamento dei tuoi dati scrivendo al contatto sopra.
+    </p>
+
+    <p class="small">© 2026 Ricevute di Affitto – by Zak</p>
+  </div>
+</footer>
+
+</body>
+</html>
