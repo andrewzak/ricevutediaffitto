@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ricevute di Affitto – application Android gratuite pour les quittances de loyer</title>
+<meta name="description" content="Ricevute di Affitto : l'application Android gratuite qui remplit, calcule et imprime les quittances de loyer, 3 par feuille A4.">
+<link rel="alternate" hreflang="it" href="https://andrewzak.github.io/ricevutediaffitto/">
+<link rel="alternate" hreflang="en" href="https://andrewzak.github.io/ricevutediaffitto/en/">
+<link rel="alternate" hreflang="fr" href="https://andrewzak.github.io/ricevutediaffitto/fr/">
+<link rel="alternate" hreflang="es" href="https://andrewzak.github.io/ricevutediaffitto/es/">
+<!-- Traduzione della pagina italiana. Le immagini sono nella cartella ../img/ -->
+<style>
+  :root {
+    --bg: #D6DECC; --bg-dark: #C3CDB4; --card: #F7F7F7;
+    --blue: #1F3A7A; --orange: #CC7000; --text: #1d2433; --muted: #4a5568;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.6; }
+  a { color: var(--blue); }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+  nav { position: sticky; top: 0; z-index: 10; background: var(--bg-dark); border-bottom: 2px solid var(--blue); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
+  nav .brand { font-weight: 800; color: var(--blue); text-decoration: none; font-size: 18px; }
+  nav ul { list-style: none; display: flex; gap: 16px; margin: 0; padding: 0; flex-wrap: wrap; }
+  nav ul a { text-decoration: none; font-weight: 600; font-size: 15px; }
+  .langs { display: flex; gap: 6px; font-size: 14px; font-weight: 700; }
+  .langs a { text-decoration: none; padding: 2px 8px; border-radius: 8px; border: 1px solid var(--blue); }
+  .langs a.current { background: var(--blue); color: #fff; }
+  header.hero { padding: 48px 0 32px; text-align: center; }
+  .logo { width: 180px; height: 180px; border-radius: 36px; background: var(--orange); border: 3px solid var(--blue);
+    display: inline-flex; align-items: center; justify-content: center; overflow: hidden; }
+  .logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  h1 { color: var(--blue); font-size: clamp(28px, 6vw, 44px); margin: 20px 0 8px; line-height: 1.15; }
+  .tagline { font-size: 19px; color: var(--muted); max-width: 640px; margin: 0 auto 16px; }
+  .langnote { max-width: 640px; margin: 0 auto 24px; background: #FFF4E5; border-left: 5px solid var(--orange);
+    padding: 10px 14px; text-align: left; font-size: 15px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: var(--radius);
+    background: var(--bg-dark); color: var(--blue); border: 2px solid var(--blue); font-weight: 700; font-size: 17px;
+    text-decoration: none; }
+  .btn.primary { background: var(--blue); color: #fff; }
+  .btn[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
+  .btn small { font-weight: 500; font-size: 13px; }
+  .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  section { padding: 40px 0; }
+  h2 { color: var(--blue); font-size: 28px; margin: 0 0 16px; }
+  h3 { color: var(--blue); font-size: 19px; margin: 24px 0 8px; }
+  .card { background: var(--card); border-radius: var(--radius); border: 2px solid var(--bg-dark); padding: 20px 24px; }
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .features .card h3 { margin-top: 0; }
+  .features .card p { margin: 0; color: var(--muted); }
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  .shot { text-align: center; }
+  .shot .frame { aspect-ratio: 9 / 19; border-radius: 22px; overflow: hidden; background: var(--card);
+    border: 3px solid var(--blue); display: flex; align-items: center; justify-content: center; }
+  .shot .frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .shot p { margin: 8px 0 0; font-weight: 600; color: var(--blue); }
+  .guide ul { padding-left: 20px; margin: 4px 0 0; }
+  .guide li { margin-bottom: 6px; }
+  .note { background: #FFF4E5; border-left: 5px solid var(--orange); padding: 12px 16px; margin-top: 20px; }
+  #donazioni .card { text-align: center; }
+  #donazioni p { max-width: 620px; margin: 0 auto 20px; }
+  footer { background: var(--bg-dark); border-top: 2px solid var(--blue); padding: 32px 0; font-size: 15px; }
+  footer h3 { margin-top: 0; }
+  .nocookie { font-weight: 700; color: var(--blue); }
+  .small { font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top">Ricevute di Affitto</a>
+    <ul>
+      <li><a href="#funzioni">Fonctionnalités</a></li>
+      <li><a href="#schermate">Écrans</a></li>
+      <li><a href="#vademecum">Mode d'emploi</a></li>
+      <li><a href="#donazioni">Soutenir</a></li>
+    </ul>
+    <div class="langs">
+      <a href="../" hreflang="it">IT</a>
+      <a href="../en/" hreflang="en">EN</a>
+      <a href="../fr/" hreflang="fr" class="current">FR</a>
+      <a href="../es/" hreflang="es">ES</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="logo"><img src="../img/logo_app_home.png" alt="Logo Ricevute di Affitto"></div>
+    <h1>Ricevute di Affitto</h1>
+    <p class="tagline">L'application Android gratuite qui remplit, calcule et imprime les quittances de loyer. Trois quittances par feuille A4, prêtes à signer, et jusqu'à 12 quittances dans un seul PDF pour boucler l'année en une minute.</p>
+    <p class="langnote"><strong>À noter :</strong> l'application est pour l'instant en italien et crée des quittances au format italien, conçues pour les biens loués en Italie.</p>
+    <div class="actions">
+      <!-- Quando l'app è pubblicata: href con il link del Play Store e togli aria-disabled -->
+      <a class="btn primary" href="#" aria-disabled="true">Disponible sur Google Play <small>(bientôt)</small></a>
+      <a class="btn" href="#vademecum">Comment ça marche</a>
+    </div>
+  </div>
+</header>
+
+<section id="funzioni">
+  <div class="wrap">
+    <h2>Ce qu'elle fait</h2>
+    <div class="features">
+      <div class="card">
+        <h3>Calculs automatiques</h3>
+        <p>Loyer, indexation ISTAT (indice d'inflation italien), charges accessoires, charges de copropriété, TVA et timbre fiscal : le total et le montant en lettres se remplissent tout seuls.</p>
+      </div>
+      <div class="card">
+        <h3>Jusqu'à 12 quittances</h3>
+        <p>Préparez toute l'année d'un coup. Le numéro, la date et le mois suivants sont proposés à chaque quittance.</p>
+      </div>
+      <div class="card">
+        <h3>Corrigez quand vous voulez</h3>
+        <p>Depuis la liste des quittances, vous pouvez modifier ou supprimer chaque quittance avant de créer le PDF.</p>
+      </div>
+      <div class="card">
+        <h3>PDF prêt à imprimer</h3>
+        <p>Trois quittances par feuille A4, au format classique du formulaire papier italien, avec l'espace pour le timbre fiscal.</p>
+      </div>
+      <div class="card">
+        <h3>Vos données restent à vous</h3>
+        <p>Aucun compte et aucune connexion : tout reste sur le téléphone et rien n'est envoyé à personne.</p>
+      </div>
+      <div class="card">
+        <h3>Gratuite</h3>
+        <p>Aucun abonnement. Si elle vous est utile, vous pouvez soutenir le projet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="schermate">
+  <div class="wrap">
+    <h2>Les écrans</h2>
+    <div class="shots">
+      <div class="shot"><div class="frame"><img src="../img/homepage.jpg" alt="Écran d'accueil"></div><p>Accueil</p></div>
+      <div class="shot"><div class="frame"><img src="../img/il-modulo.jpg" alt="Le formulaire à remplir"></div><p>Le formulaire</p></div>
+      <div class="shot"><div class="frame"><img src="../img/elenco_ricevute.jpg" alt="Liste des quittances"></div><p>Liste des quittances</p></div>
+      <div class="shot"><div class="frame"><img src="../img/il-pdf.jpg" alt="Le PDF avec trois quittances"></div><p>Le PDF</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="vademecum">
+  <div class="wrap">
+    <h2>Mode d'emploi</h2>
+    <div class="card guide">
+      <h3>Remplir le formulaire</h3>
+      <ul>
+        <li>Remplissez les champs de la quittance. <strong>Aucun champ n'est obligatoire</strong> : laissez-les vides si vous voulez imprimer des quittances vierges.</li>
+        <li>Dans les dates, tapez uniquement les chiffres : <strong>01012026</strong> devient 01/01/2026. Les jours, les mois et les années sont vérifiés.</li>
+      </ul>
+      <h3>Montants</h3>
+      <ul>
+        <li>Le <strong>total</strong> se calcule tout seul : saisissez le loyer, l'ISTAT, les charges accessoires et de copropriété, plus la TVA sur le montant imposable, plus le timbre fiscal. <strong>Saisissez les montants sans le symbole de l'euro, et l'ISTAT et la TVA sans le signe pour cent.</strong></li>
+        <li>Le montant en lettres est écrit automatiquement dans le PDF (en italien).</li>
+      </ul>
+      <h3>Numéro, date et mois</h3>
+      <ul>
+        <li>Après chaque quittance ajoutée, le <strong>numéro</strong> suivant, la <strong>date</strong> (un mois plus tard) et le <strong>mois</strong> sont proposés.</li>
+        <li>Si le mois ne correspond pas à la date, un <strong>avertissement</strong> s'affiche, mais vous pouvez quand même continuer dans les cas particuliers.</li>
+      </ul>
+      <h3>Astuce</h3>
+      <ul>
+        <li>Si vous préparez toutes les quittances en fin d'année, il suffit de créer la première quittance à partir de janvier, avec son numéro, la date d'émission et tous les autres champs, puis <strong>d'appuyer plusieurs fois sur « Aggiungi al PDF » (Ajouter au PDF) jusqu'à 12</strong>. L'application prépare les quittances en augmentant dans l'ordre le numéro, la date et le mois, sans toucher aux autres champs : <strong>vos quittances sont prêtes à imprimer en moins d'une minute</strong>.</li>
+      </ul>
+      <h3>Feuille et PDF</h3>
+      <ul>
+        <li>Appuyez sur <strong>« Aggiungi al PDF »</strong> (Ajouter au PDF) pour mettre la quittance sur la feuille. La feuille accepte jusqu'à <strong>12 quittances</strong>.</li>
+        <li>Dans l'écran <strong>Ricevute</strong> (Quittances), vous pouvez <strong>modifier</strong> ou <strong>supprimer</strong> chaque quittance. Après la modification, appuyez sur <strong>« Aggiorna ricevuta »</strong> (Mettre à jour la quittance).</li>
+        <li>Appuyez sur <strong>« Crea PDF »</strong> (Créer le PDF) et choisissez où l'enregistrer : chaque feuille A4 contient 3 quittances.</li>
+        <li>La feuille et le formulaire sont <strong>enregistrés automatiquement</strong> sur le téléphone : si l'application est fermée par un appel ou par le système, vous retrouvez tout comme vous l'aviez laissé.</li>
+      </ul>
+      <h3>Boutons de réinitialisation</h3>
+      <ul>
+        <li><strong>Svuota campi</strong> (Vider les champs) réinitialise le formulaire.</li>
+        <li><strong>Resetta date</strong> (Réinitialiser les dates) efface les dates et le numéro. La date d'enregistrement du bail est conservée.</li>
+        <li><strong>Svuota foglio</strong> (Vider la feuille) supprime toutes les quittances de la feuille.</li>
+      </ul>
+      <div class="note"><strong>Important.</strong> Les quittances ne remplacent ni l'enregistrement du bail ni la déclaration de revenus.</div>
+    </div>
+  </div>
+</section>
+
+<section id="donazioni">
+  <div class="wrap">
+    <h2>Soutenir le projet</h2>
+    <div class="card">
+      <p>Ricevute di Affitto est gratuite et sans publicité. Si elle vous fait gagner du temps, vous pouvez offrir une contribution pour m'aider à la maintenir et à l'améliorer.</p>
+      <a class="btn primary" href="https://donate.stripe.com/3cIfZieiM8ik815goP5kk00" target="_blank" rel="noopener">♥ Soutenir le projet</a>
+    </div>
+  </div>
+</section>
+
+<footer id="privacy">
+  <div class="wrap">
+    <p class="nocookie">Ce site n'utilise ni cookies ni outils de suivi.</p>
+    <h3>Politique de confidentialité</h3>
+    <p><strong>Responsable :</strong> Andrew Zak – <a href="mailto:zakpoint@yahoo.it">Me contacter</a>.</p>
+    <p><strong>Site web.</strong> Le site n'utilise ni cookies, ni statistiques, ni services tiers. Il est hébergé sur GitHub Pages (GitHub Inc.), qui enregistre, pour des raisons techniques et de sécurité, les données d'accès standard (comme l'adresse IP, la date et l'heure de la visite) dans les journaux du serveur, conservées pendant la durée prévue par le fournisseur. Les liens externes (Google Play, service de paiement) mènent à des sites ayant leur propre politique de confidentialité.</p>
+    <p><strong>Application Ricevute di Affitto.</strong> L'application ne demande aucun compte et n'envoie aucune donnée. Les informations saisies (noms, montants, dates) sont enregistrées uniquement dans la mémoire privée de l'application sur l'appareil de l'utilisateur, servent à créer le PDF et sont supprimées en désinstallant l'application ou avec les boutons « Svuota campi » et « Svuota foglio ». Le PDF est enregistré à l'endroit choisi par l'utilisateur.</p>
+    <p><strong>Droits.</strong> Vous pouvez demander des informations sur le traitement de vos données en écrivant au contact ci-dessus.</p>
+    <p class="small">Cette page est une traduction : en cas de divergence, la version italienne fait foi.</p>
+    <p class="small">© 2026 Ricevute di Affitto – by Zak</p>
+  </div>
+</footer>
+
+</body>
+</html>
